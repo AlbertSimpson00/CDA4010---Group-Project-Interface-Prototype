@@ -21,8 +21,8 @@ Node.js · Express · Vue.js · Bootstrap
 Requires [Node.js](https://nodejs.org/) (v18+).
 
 ```bash
-git clone [REPO URL placeholder]
-cd [REPO NAME placeholder]
+git clone [https://github.com/AlbertSimpson00/CDA4010---Group-Project-Interface-Prototype]
+cd [REPO DESTINATION]
 npm install
 npm start
 ```
