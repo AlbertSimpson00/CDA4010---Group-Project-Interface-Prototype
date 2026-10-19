@@ -1,8 +1,8 @@
 # UNFinished Business – Digital Employment Application
 
-A web-based, accessible version of UNFinished Business's paper employment application, built as a course project for **[COURSE NUMBER – Course Name]**.
+A web-based, accessible version of UNFinished Business's paper employment application, built as a course project for **[CDA4010 – User Interface Design]**.
 
-**Team:** [Nick Gati], [Gavin Pascual], [Albert Simpson]
+**Team:** Nick Gati, Gavin Pascual, Albert Simpson
 
 ## Features
 
@@ -50,4 +50,4 @@ Track any changes from the approved Interface Proposal here (needed for the Deve
 
 | Date | Change | Reason |
 |------|--------|--------|
-|      |        |        |
+| N/A  |  N/A   |  N/A   |
