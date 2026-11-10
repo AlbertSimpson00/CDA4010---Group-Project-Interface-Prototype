@@ -1,0 +1,14 @@
+UNFinished Business - Employment Application
+Submitted: 2026-11-10T19:53:55.720Z
+
+personalInfo.firstName: nicholas
+personalInfo.lastName: gati
+personalInfo.email: 
+personalInfo.phone: 
+employment.position: fortnite
+employment.availableStartDate: 
+employment.fullTime: true
+education: (none)
+references: (none)
+criminalHistory: (none)
+acknowledgment: false
