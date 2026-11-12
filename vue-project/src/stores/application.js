@@ -16,7 +16,12 @@ export const application = reactive({
 
   employment: {
     position: '',
+    otherPosition: '',
+    employmentType: '',
     availableStartDate: '',
+    availableDays: [],
+    preferredShifts: [],
+    additionalNotes: '',
     fullTime: false
   },
 

@@ -1,19 +1,10 @@
-
 <script setup>
-import { reactive } from 'vue'
+import { application } from '../stores/application.js'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-const form = reactive({
-  position: '',
-  otherPosition: '',
-  employmentType: '',
-  startDate: '',
-  availableDays: [],
-  preferredShifts: [],
-  additionalNotes: ''
-})
+const form = application.employment
 
 const positions = [
   'Administrative Assistant',
@@ -36,19 +27,14 @@ const shifts = [
 ]
 
 function nextPage() {
-  // Save form data before navigating
-  sessionStorage.setItem('page2', JSON.stringify(form))
-
-  // Change this when Page3.vue is ready
-  // router.push('/page3')
-
-  console.log('Page 2 completed:', form)
+  console.log('Page 2 completed:', application)
 }
 
 function previousPage() {
   router.push('/')
 }
 </script>
+
 
 <template>
   <main class="container py-5">

@@ -1,8 +1,13 @@
-
 <script setup>
 import { application } from '../stores/application.js'
-</script>
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
+
+function nextPage() {
+  router.push('/page2')
+}
+</script>
 <template>
   <div class="page">
 
@@ -27,7 +32,7 @@ import { application } from '../stores/application.js'
       <p class="subtitle">Tell us how we can contact you.</p>
       <p class="required-text">* Required fields</p>
 
-      <form @submit.prevent>
+      <form @submit.prevent="nextPage">
 
         <div class="form-grid">
 
@@ -82,8 +87,8 @@ import { application } from '../stores/application.js'
         </div>
 
         <div class="form-footer">
-          <button type="button" class="next-button">
-            Next: Position &amp; Availability →
+          <button type="submit" class="next-button">
+              Next: Position &amp; Availability →
           </button>
         </div>
 

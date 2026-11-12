@@ -1,3 +1,4 @@
+
 import { createRouter, createWebHistory } from 'vue-router'
 
 import Page1 from '../components/Page1.vue'
@@ -18,13 +19,7 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: [
-    {
-      path: '/page2',
-      name: 'Page2',
-      component: Page2
-    }
-  ]
+  routes
 })
 
 export default router
