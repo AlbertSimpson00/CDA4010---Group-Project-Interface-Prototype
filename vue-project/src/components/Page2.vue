@@ -1,4 +1,3 @@
-
 <script setup>
 import { reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -7,9 +6,13 @@ const router = useRouter()
 
 const form = reactive({
   position: '',
+  desiredSalary: '',
+  salaryPeriod: 'Hourly',
   startDate: '',
   employmentTypes: [],
   workdays: [],
+  weeklyHours: '',
+  workNights: '',
   availabilityDetails: ''
 })
 
@@ -21,23 +24,13 @@ const positions = [
   'Other'
 ]
 
-const employmentTypes = [
-  'Full-time',
-  'Part-time',
-  'Temporary'
-]
+const employmentTypes = ['Full-time', 'Part-time']
 
 const days = [
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-  'Sunday'
+  'Monday', 'Tuesday', 'Wednesday',
+  'Thursday', 'Friday', 'Saturday', 'Sunday'
 ]
 
-// Restore previously entered information
 onMounted(() => {
   const saved = sessionStorage.getItem('page2')
 
@@ -45,7 +38,7 @@ onMounted(() => {
     try {
       Object.assign(form, JSON.parse(saved))
     } catch (error) {
-      console.error('Unable to restore Page 2:', error)
+      console.error('Could not restore Page 2:', error)
     }
   }
 })
@@ -54,21 +47,19 @@ function saveForm() {
   sessionStorage.setItem('page2', JSON.stringify(form))
 }
 
-function nextPage() {
-  saveForm()
-  router.push('/page3')
-}
-
 function previousPage() {
   saveForm()
   router.push('/page1')
+}
+
+function nextPage() {
+  saveForm()
+  router.push('/page3')
 }
 </script>
 
 <template>
   <div class="application-page">
-
-    <!-- HEADER -->
     <header class="site-header">
       <div class="header-content">
         <span class="brand">UNFinished Business</span>
@@ -76,11 +67,9 @@ function previousPage() {
       </div>
     </header>
 
-    <!-- APPLICATION CARD -->
     <main class="application-container">
       <div class="application-card">
 
-        <!-- PROGRESS -->
         <div class="progress-section">
           <p class="step-label">
             Step 2 of 5 — Position & Availability
@@ -96,23 +85,20 @@ function previousPage() {
           </div>
         </div>
 
-
-        <!-- TITLE -->
         <h1>Position & Availability</h1>
+
         <p class="description">
           Tell us what position you're interested in
-          and when you can work.
+          and when you are available to work.
         </p>
 
         <form @submit.prevent="nextPage">
-
-          <!-- REQUIRED FIELDS -->
           <p class="required-note">* Required fields</p>
 
           <div class="form-row">
             <div class="form-group">
               <label for="position">
-                Position Applying For <span>*</span>
+                Position Applied For <span>*</span>
               </label>
 
               <select
@@ -123,6 +109,7 @@ function previousPage() {
                 <option value="" disabled>
                   Select a position
                 </option>
+
                 <option
                   v-for="position in positions"
                   :key="position"
@@ -135,7 +122,7 @@ function previousPage() {
 
             <div class="form-group">
               <label for="startDate">
-                Availability Start Date <span>*</span>
+                Date Available to Start <span>*</span>
               </label>
 
               <input
@@ -144,20 +131,43 @@ function previousPage() {
                 type="date"
                 required
               />
-
-              <p class="field-hint">
-                MM/DD/YYYY - Type or use the calendar.
-              </p>
             </div>
           </div>
 
-          <!-- EMPLOYMENT TYPE -->
-          <fieldset class="form-section">
-            <legend>
-              Desired Employment Type
-            </legend>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="salary">
+                Desired Salary
+              </label>
 
-            <p class="field-hint">Select all that apply.</p>
+              <input
+                id="salary"
+                v-model="form.desiredSalary"
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="Enter amount"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="salaryPeriod">
+                Salary Type
+              </label>
+
+              <select
+                id="salaryPeriod"
+                v-model="form.salaryPeriod"
+              >
+                <option>Hourly</option>
+                <option>Weekly</option>
+                <option>Annually</option>
+              </select>
+            </div>
+          </div>
+
+          <fieldset class="form-section">
+            <legend>Employment Desired <span>*</span></legend>
 
             <div class="checkbox-group">
               <label
@@ -175,15 +185,12 @@ function previousPage() {
             </div>
           </fieldset>
 
-          <!-- WORKDAYS -->
           <fieldset class="form-section">
-            <legend>Available Workdays</legend>
+            <legend>
+              Days Available to Work <span>*</span>
+            </legend>
 
-            <p class="field-hint">
-              Select all days you are available.
-            </p>
-
-            <div class="checkbox-group workdays">
+            <div class="checkbox-group">
               <label
                 v-for="day in days"
                 :key="day"
@@ -199,26 +206,74 @@ function previousPage() {
             </div>
           </fieldset>
 
-          <!-- AVAILABILITY DETAILS -->
-          <div class="form-section">
-            <label for="availabilityDetails">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="weeklyHours">
+                Hours Available Per Week <span>*</span>
+              </label>
+
+              <input
+                id="weeklyHours"
+                v-model="form.weeklyHours"
+                type="number"
+                min="1"
+                max="168"
+                required
+                placeholder="e.g. 40"
+              />
+            </div>
+
+            <fieldset class="form-section night-section">
+              <legend>
+                Can You Work Nights? <span>*</span>
+              </legend>
+
+              <div class="radio-group">
+                <label>
+                  <input
+                    v-model="form.workNights"
+                    type="radio"
+                    value="Yes"
+                    required
+                  />
+                  Yes
+                </label>
+
+                <label>
+                  <input
+                    v-model="form.workNights"
+                    type="radio"
+                    value="No"
+                  />
+                  No
+                </label>
+              </div>
+            </fieldset>
+          </div>
+
+          <div class="form-group">
+            <label for="details">
               Availability Details (optional)
             </label>
 
-            <p class="field-hint">
-              Tell us about any preferred hours or
-              scheduling restrictions.
-            </p>
-
             <textarea
-              id="availabilityDetails"
+              id="details"
               v-model="form.availabilityDetails"
               rows="4"
-              placeholder="I prefer daytime hours and can begin at 8:00 AM. I'm unavailable after 5:00 PM on Wednesdays."
+              placeholder="List any scheduling restrictions or additional availability information."
             ></textarea>
           </div>
 
-          <!-- NAVIGATION -->
+          <p
+            v-if="
+              form.employmentTypes.length === 0 ||
+              form.workdays.length === 0
+            "
+            class="validation-note"
+          >
+            Select at least one employment type and workday.
+          </p>
+
           <div class="form-navigation">
             <button
               type="button"
@@ -228,282 +283,27 @@ function previousPage() {
               Back
             </button>
 
-            <button type="submit" class="next-button">
-              Next: Education & Experience
-              <span aria-hidden="true">➜</span>
+            <button
+              type="submit"
+              class="next-button"
+              :disabled="
+                form.employmentTypes.length === 0 ||
+                form.workdays.length === 0
+              "
+            >
+              Next: Education & Experience →
             </button>
           </div>
-
         </form>
       </div>
     </main>
 
-    <!-- FOOTER -->
     <footer class="site-footer">
       UNFinished Business is an equal-opportunity employer.
     </footer>
-
   </div>
 </template>
 
 <style scoped>
-.application-page {
-  min-height: 100vh;
-  background-color: #f3f5f7;
-  color: #243449;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-/* HEADER */
-.site-header {
-  background: white;
-  border-bottom: 1px solid #e5e9ef;
-  padding: 22px 0;
-}
-
-.header-content {
-  max-width: 1200px;
-  margin: auto;
-  padding: 0 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.brand {
-  color: #24476d;
-  font-size: 18px;
-  font-weight: 500;
-}
-
-.header-title {
-  font-size: 12px;
-  font-weight: 600;
-}
-
-/* CARD */
-.application-container {
-  display: flex;
-  justify-content: center;
-  padding: 48px 20px 24px;
-}
-
-.application-card {
-  background: white;
-  width: 100%;
-  max-width: 750px;
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.025);
-}
-
-/* PROGRESS */
-.progress-section {
-  margin-bottom: 30px;
-}
-
-.step-label {
-  font-size: 12px;
-  color: #24476d;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-
-.progress-track {
-  display: flex;
-  gap: 8px;
-}
-
-.progress-segment {
-  flex: 1;
-  height: 4px;
-  background: #e9edf2;
-  border-radius: 3px;
-}
-
-.progress-segment.active {
-  background: #24476d;
-}
-
-/* TITLES */
-h1 {
-  font-size: 27px;
-  font-weight: 500;
-  margin: 0 0 8px;
-}
-
-.description {
-  font-size: 14px;
-  color: #7d8795;
-  margin-bottom: 12px;
-}
-
-.required-note {
-  font-size: 11px;
-  color: #8c95a3;
-  margin-bottom: 18px;
-}
-
-/* FORM */
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-}
-
-.form-group {
-  margin-bottom: 22px;
-  min-width: 0;
-}
-
-label,
-legend {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  margin-bottom: 7px;
-}
-
-label span {
-  color: #bd4a4a;
-}
-
-select,
-input[type="date"],
-textarea {
-  width: 100%;
-  border: 1px solid #d4dce6;
-  border-radius: 5px;
-  padding: 11px 12px;
-  font-size: 13px;
-  color: #344256;
-  background: white;
-  box-sizing: border-box;
-}
-
-select:focus,
-input:focus,
-textarea:focus {
-  outline: none;
-  border-color: #507ba9;
-  box-shadow: 0 0 0 2px rgba(80, 123, 169, 0.15);
-}
-
-.field-hint {
-  color: #8b96a5;
-  font-size: 11px;
-  margin: 5px 0 10px;
-}
-
-.form-section {
-  margin: 18px 0 24px;
-  padding: 0;
-  border: 0;
-  min-width: 0;
-}
-
-legend {
-  padding: 0;
-}
-
-.checkbox-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-}
-
-.checkbox-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: normal;
-  margin: 0;
-  cursor: pointer;
-}
-
-.checkbox-label input {
-  accent-color: #24476d;
-  margin: 0;
-}
-
-.workdays {
-  gap: 12px;
-}
-
-textarea {
-  resize: vertical;
-  min-height: 90px;
-}
-
-/* NAVIGATION */
-.form-navigation {
-  border-top: 1px solid #e9edf2;
-  padding-top: 24px;
-  margin-top: 28px;
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.back-button,
-.next-button {
-  padding: 12px 18px;
-  border-radius: 5px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.back-button {
-  background: white;
-  color: #24476d;
-  border: 1px solid #d4dce6;
-}
-
-.next-button {
-  background: #19385f;
-  color: white;
-  border: none;
-}
-
-.next-button:hover {
-  background: #2d527e;
-}
-
-/* FOOTER */
-.site-footer {
-  text-align: center;
-  color: #8b96a5;
-  font-size: 11px;
-  padding: 12px 20px 28px;
-}
-
-/* MOBILE */
-@media (max-width: 600px) {
-  .application-card {
-    padding: 24px 18px;
-  }
-
-  .application-container {
-    padding: 20px 12px;
-  }
-
-  .form-row {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  .header-content {
-    padding: 0 16px;
-  }
-
-  .checkbox-group {
-    gap: 12px;
-  }
-
-  .next-button {
-    max-width: 70%;
-  }
-}
+@import '../assets/application-form.css';
 </style>
