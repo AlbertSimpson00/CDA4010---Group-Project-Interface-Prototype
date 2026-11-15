@@ -87,13 +87,15 @@ function previousPage() {
           </p>
 
           <div class="progress-track">
-            <div class="progress-segment active"></div>
-            <div class="progress-segment"></div>
-            <div class="progress-segment"></div>
-            <div class="progress-segment"></div>
-            <div class="progress-segment"></div>
+            <div
+              v-for="step in 5"
+              :key="step"
+              class="progress-segment"
+              :class="{ active: step <= 2 }"
+            ></div>
           </div>
         </div>
+
 
         <!-- TITLE -->
         <h1>Position & Availability</h1>
