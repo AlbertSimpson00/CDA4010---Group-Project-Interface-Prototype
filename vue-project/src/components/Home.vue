@@ -55,7 +55,7 @@ function startApplication() {
         <!-- REMOVED QUESTIONS DROPDOWN -->
         <details class="removed-section">
         <summary class="removed-title">
-            Questions Removed From the Original Application
+            Questions Removed or Modified From the Original Application
         </summary>
 
         <div class="removed-content">

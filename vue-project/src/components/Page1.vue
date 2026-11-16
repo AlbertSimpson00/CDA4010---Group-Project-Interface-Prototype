@@ -77,6 +77,7 @@ function nextPage() {
    
           <div class="form-group">
             <label for="state">State *</label>
+
             <select id="state" v-model="application.personalInfo.state" required>
               <option value="" disabled>Select State</option>
               <option value="AL">Alabama</option>
@@ -302,11 +303,27 @@ h2 {
 }
 
 .form-footer {
-  border-top: 1px solid #e5e7eb;
-  margin-top: 40px;
-  padding-top: 12px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  margin-top: 30px;
+}
+
+.demo-button {
+  margin-right: auto;
+}
+
+@media (max-width: 600px) {
+  .form-footer {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .form-footer button {
+    width: 100%;
+    min-height: 44px;
+  }
 }
 
 .next-button {

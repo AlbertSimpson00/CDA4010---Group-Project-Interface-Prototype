@@ -327,3 +327,96 @@
     flex-wrap: wrap;
   }
 }
+
+
+/* Prevent elements from overflowing */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Form controls */
+input,
+select,
+textarea {
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Mobile layout */
+@media (max-width: 768px) {
+  .form-container,
+  .form-card,
+  .application-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 20px 16px;
+  }
+
+  .form-row,
+  .form-grid,
+  .two-column {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .form-navigation,
+  .form-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .form-navigation button,
+  .form-footer button {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    font-size: 16px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+}
+
+/* Visible keyboard focus */
+:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 3px;
+}
+
+/* Accessible interactive elements */
+button,
+select,
+summary {
+  cursor: pointer;
+}
+
+button {
+  min-height: 44px;
+}
+
+/* Reduced motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
