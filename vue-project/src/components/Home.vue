@@ -52,12 +52,63 @@ function startApplication() {
           information ready before beginning.
         </p>
 
+        <!-- REMOVED QUESTIONS DROPDOWN -->
+        <details class="removed-section">
+        <summary class="removed-title">
+            Questions Removed From the Original Application
+        </summary>
+
+        <div class="removed-content">
+            <div class="removed-item">
+            <h3>Medical Conditions & Health Insurance</h3>
+            <p>
+                These questions raise concerns under the
+                Americans with Disabilities Act (ADA).
+                Employers are generally restricted from asking
+                disability-related questions before making
+                a conditional job offer.
+            </p>
+            </div>
+
+            <div class="removed-item">
+            <h3>Race & Gender</h3>
+            <p>
+                Title VII of the Civil Rights Act protects
+                applicants against discrimination based on
+                race and sex. Voluntary demographic information,
+                if collected, should be kept separate from
+                hiring decisions.
+            </p>
+            </div>
+
+            <div class="removed-item">
+            <h3>Marital Status</h3>
+            <p>
+                Marital status is generally unrelated to
+                an applicant's qualifications or ability
+                to perform the job. Asking about it may
+                introduce discrimination concerns.
+            </p>
+            </div>
+
+            <div class="removed-item">
+            <h3>Children & Child-Related Absences</h3>
+            <p>
+                Questions about having children or missing
+                work due to a child's illness are not relevant
+                to evaluating job qualifications and may
+                encourage discriminatory assumptions.
+            </p>
+            </div>
+        </div>
+        </details>
+
       </div>
     </main>
 
     <!-- FOOTER -->
     <footer class="site-footer">
-    <p class="developer-credit">Developed by Nick Gati, Gavin Pascual, Albert Simpson</p>
+    <p class="developer-credit">Developed by Nick Gati, Gavin Pascual, Lee Simpson</p>
     <p class="footer-description">
         UNFinished Business is an equal-opportunity employer.
     </p>
@@ -74,6 +125,69 @@ function startApplication() {
   font-family: Arial, Helvetica, sans-serif;
   display: flex;
   flex-direction: column;
+}
+
+.removed-section {
+  margin-top: 30px;
+  padding: 16px 20px;
+  border: 1px solid #dee5ed;
+  border-radius: 6px;
+  background: #f7f9fc;
+}
+
+.removed-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  color: #24476d;
+  font-size: 15px;
+  font-weight: 600;
+  list-style: none;
+}
+
+.removed-title::-webkit-details-marker {
+  display: none;
+}
+
+.removed-title::after {
+  content: "▼";
+  font-size: 12px;
+  margin-left: 12px;
+  transition: transform 0.2s ease;
+}
+
+.removed-section[open] .removed-title::after {
+  transform: rotate(180deg);
+}
+
+.removed-content {
+  margin-top: 20px;
+  border-top: 1px solid #dee5ed;
+  padding-top: 15px;
+}
+
+.removed-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #e9edf2;
+}
+
+.removed-item:last-child {
+  border-bottom: none;
+}
+
+.removed-item h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #24476d;
+  margin: 0 0 8px;
+}
+
+.removed-item p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #566273;
+  margin: 0;
 }
 
 /* HEADER */
