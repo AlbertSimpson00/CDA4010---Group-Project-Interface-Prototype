@@ -2,8 +2,118 @@
 <script setup>
 import { application } from '../stores/application.js'
 import { useRouter } from 'vue-router'
+import { reactive, nextTick } from 'vue'
 
 const router = useRouter()
+
+const errors = reactive({})
+const touched = reactive({})
+const fieldRefs = {}
+
+function fieldKey(section, index, field) {
+  return `${section}-${index}-${field}`
+}
+
+function setFieldRef(key, element) {
+  if (element) fieldRefs[key] = element
+}
+
+function getError(section, index, field) {
+  const entry = section === 'education'
+    ? application.education[index]
+    : application.workExperience[index]
+
+  if (!entry) return ''
+
+  const value = String(entry[field] ?? '').trim()
+
+  const labels = {
+    schoolName: 'School or Institution Name',
+    educationLevel: 'Education Level',
+    employerName: 'Employer Name',
+    jobTitle: 'Job Title',
+    startDate: 'Start Date'
+  }
+
+  if (labels[field] && !value) {
+    return `${labels[field]} is required.`
+  }
+
+  if (section === 'employment') {
+    if (field === 'endDate' && !entry.currentlyWorking) {
+      if (!value) return 'End Date is required.'
+    }
+
+    if (field === 'endDate' && value && entry.startDate) {
+      if (value < entry.startDate) {
+        return 'End Date cannot be before Start Date.'
+      }
+    }
+  }
+
+  return ''
+}
+
+function validateField(section, index, field) {
+  const key = fieldKey(section, index, field)
+  touched[key] = true
+  errors[key] = getError(section, index, field)
+}
+
+function updateField(section, index, field) {
+  const key = fieldKey(section, index, field)
+
+  if (touched[key]) {
+    errors[key] = getError(section, index, field)
+  }
+}
+
+function resetValidation() {
+  Object.keys(errors).forEach(key => delete errors[key])
+  Object.keys(touched).forEach(key => delete touched[key])
+  Object.keys(fieldRefs).forEach(key => delete fieldRefs[key])
+}
+
+async function validatePage() {
+  resetValidation()
+
+  const fields = []
+
+  application.education.forEach((entry, index) => {
+    fields.push(
+      ['education', index, 'schoolName'],
+      ['education', index, 'educationLevel']
+    )
+  })
+
+  if (!application.noPreviousExperience) {
+    application.workExperience.forEach((entry, index) => {
+      fields.push(
+        ['employment', index, 'employerName'],
+        ['employment', index, 'jobTitle'],
+        ['employment', index, 'startDate'],
+        ['employment', index, 'endDate']
+      )
+    })
+  }
+
+  fields.forEach(([section, index, field]) => {
+    validateField(section, index, field)
+  })
+
+  const firstInvalid = fields.find(([section, index, field]) =>
+    errors[fieldKey(section, index, field)]
+  )
+
+  if (firstInvalid) {
+    await nextTick()
+    const key = fieldKey(...firstInvalid)
+    fieldRefs[key]?.focus()
+    return false
+  }
+
+  return true
+}
 
 function demoAutofill() {
   application.education.splice(
@@ -35,19 +145,21 @@ function demoAutofill() {
   application.noPreviousExperience = false
   application.additionalSkills =
     'Leadership, crisis management, military training, architecture, emergency response, teamwork, and advanced problem-solving.'
+
+    resetValidation()
 }
 
 function clearForm() {
   application.education.splice(0)
   application.workExperience.splice(0)
 
+  addEducation()
+  addEmployment()
+
   application.noPreviousExperience = false
   application.additionalSkills = ''
 
-  // Reset any additional Page 3 fields here.
-
-  Object.keys(errors).forEach(key => delete errors[key])
-  Object.keys(touched).forEach(key => delete touched[key])
+  resetValidation()
 }
 
 //add another education entry
@@ -90,7 +202,9 @@ function previousPage() {
 }
 
 // to Page 4
-function nextPage() {
+async function nextPage() {
+  if (!(await validatePage())) return
+
   console.log('Education and Experience:', application)
   router.push('/page4')
 }
@@ -128,7 +242,7 @@ function nextPage() {
 
       <p class="required-text">* Required fields</p>
 
-      <form @submit.prevent="nextPage">
+      <form @submit.prevent="nextPage" novalidate>
 
         <!-- EDUCATION -->
         <section class="form-section">
@@ -159,12 +273,30 @@ function nextPage() {
                 School or Institution Name *
               </label>
 
-              <input
+              
+                <input
                 :id="'school-' + index"
+                :ref="el => setFieldRef(fieldKey('education', index, 'schoolName'), el)"
                 v-model="education.schoolName"
                 type="text"
                 required
-              >
+                :aria-invalid="!!errors[fieldKey('education', index, 'schoolName')]"
+                :aria-describedby="
+                    errors[fieldKey('education', index, 'schoolName')]
+                    ? 'school-error-' + index
+                    : undefined
+                "
+                @blur="validateField('education', index, 'schoolName')"
+                @input="updateField('education', index, 'schoolName')"
+                />
+
+                <p
+                v-if="errors[fieldKey('education', index, 'schoolName')]"
+                :id="'school-error-' + index"
+                class="field-error"
+                >
+                {{ errors[fieldKey('education', index, 'schoolName')] }}
+                </p>
             </div>
 
             <div class="form-grid">
@@ -174,21 +306,40 @@ function nextPage() {
                   Education Level *
                 </label>
 
+                
                 <select
-                  :id="'level-' + index"
-                  v-model="education.educationLevel"
-                  required
+                :id="'level-' + index"
+                :ref="el => setFieldRef(fieldKey('education', index, 'educationLevel'), el)"
+                v-model="education.educationLevel"
+                required
+                :aria-invalid="!!errors[fieldKey('education', index, 'educationLevel')]"
+                :aria-describedby="
+                    errors[fieldKey('education', index, 'educationLevel')]
+                    ? 'level-error-' + index
+                    : undefined
+                "
+                @blur="validateField('education', index, 'educationLevel')"
+                @change="updateField('education', index, 'educationLevel')"
                 >
-                  <option value="" disabled>Select Level</option>
-                  <option>High School</option>
-                  <option>GED</option>
-                  <option>Some College</option>
-                  <option>Associate Degree</option>
-                  <option>Bachelor's Degree</option>
-                  <option>Master's Degree</option>
-                  <option>Doctorate</option>
-                  <option>Other</option>
+                <option value="" disabled>Select Level</option>
+                <option>High School</option>
+                <option>GED</option>
+                <option>Some College</option>
+                <option>Associate Degree</option>
+                <option>Bachelor's Degree</option>
+                <option>Master's Degree</option>
+                <option>Doctorate</option>
+                <option>Other</option>
                 </select>
+
+                <p
+                v-if="errors[fieldKey('education', index, 'educationLevel')]"
+                :id="'level-error-' + index"
+                class="field-error"
+                >
+                {{ errors[fieldKey('education', index, 'educationLevel')] }}
+                </p>
+
               </div>
 
               <div class="form-group">
@@ -286,25 +437,62 @@ function nextPage() {
                   Employer Name *
                 </label>
 
+                
                 <input
-                  :id="'employer-' + index"
-                  v-model="job.employerName"
-                  type="text"
-                  required
+                :id="'employer-' + index"
+                :ref="el => setFieldRef(fieldKey('employment', index, 'employerName'), el)"
+                v-model="job.employerName"
+                type="text"
+                required
+                :aria-invalid="!!errors[fieldKey('employment', index, 'employerName')]"
+                :aria-describedby="
+                    errors[fieldKey('employment', index, 'employerName')]
+                    ? 'employer-error-' + index
+                    : undefined
+                "
+                @blur="validateField('employment', index, 'employerName')"
+                @input="updateField('employment', index, 'employerName')"
+                />
+
+                <p
+                v-if="errors[fieldKey('employment', index, 'employerName')]"
+                :id="'employer-error-' + index"
+                class="field-error"
                 >
+                {{ errors[fieldKey('employment', index, 'employerName')] }}
+                </p>
+
               </div>
 
               <div class="form-group">
                 <label :for="'job-title-' + index">
                   Job Title *
                 </label>
-
+                
                 <input
-                  :id="'job-title-' + index"
-                  v-model="job.jobTitle"
-                  type="text"
-                  required
+                :id="'job-title-' + index"
+                :ref="el => setFieldRef(fieldKey('employment', index, 'jobTitle'), el)"
+                v-model="job.jobTitle"
+                type="text"
+                required
+                :aria-invalid="!!errors[fieldKey('employment', index, 'jobTitle')]"
+                :aria-describedby="
+                    errors[fieldKey('employment', index, 'jobTitle')]
+                    ? 'job-title-error-' + index
+                    : undefined
+                "
+                @blur="validateField('employment', index, 'jobTitle')"
+                @input="updateField('employment', index, 'jobTitle')"
+                />
+
+                <p
+                v-if="errors[fieldKey('employment', index, 'jobTitle')]"
+                :id="'job-title-error-' + index"
+                class="field-error"
                 >
+                {{ errors[fieldKey('employment', index, 'jobTitle')] }}
+                </p>
+
               </div>
 
               <div class="form-group">
@@ -312,12 +500,31 @@ function nextPage() {
                   Start Date *
                 </label>
 
+                
                 <input
-                  :id="'start-' + index"
-                  v-model="job.startDate"
-                  type="date"
-                  required
+                :id="'start-' + index"
+                :ref="el => setFieldRef(fieldKey('employment', index, 'startDate'), el)"
+                v-model="job.startDate"
+                type="date"
+                required
+                :aria-invalid="!!errors[fieldKey('employment', index, 'startDate')]"
+                :aria-describedby="
+                    errors[fieldKey('employment', index, 'startDate')]
+                    ? 'start-error-' + index
+                    : undefined
+                "
+                @blur="validateField('employment', index, 'startDate')"
+                @change="updateField('employment', index, 'startDate')"
+                />
+
+                <p
+                v-if="errors[fieldKey('employment', index, 'startDate')]"
+                :id="'start-error-' + index"
+                class="field-error"
                 >
+                {{ errors[fieldKey('employment', index, 'startDate')] }}
+                </p>
+
               </div>
 
               <div class="form-group">
@@ -325,22 +532,42 @@ function nextPage() {
                   End Date
                 </label>
 
+                
                 <input
-                  :id="'end-' + index"
-                  v-model="job.endDate"
-                  type="date"
-                  :disabled="job.currentlyWorking"
-                >
-              </div>
+                :id="'end-' + index"
+                :ref="el => setFieldRef(fieldKey('employment', index, 'endDate'), el)"
+                v-model="job.endDate"
+                type="date"
+                :disabled="job.currentlyWorking"
+                :aria-invalid="!!errors[fieldKey('employment', index, 'endDate')]"
+                :aria-describedby="
+                    errors[fieldKey('employment', index, 'endDate')]
+                    ? 'end-error-' + index
+                    : undefined
+                "
+                @blur="validateField('employment', index, 'endDate')"
+                @change="updateField('employment', index, 'endDate')"
+                />
 
+                <p
+                v-if="errors[fieldKey('employment', index, 'endDate')]"
+                :id="'end-error-' + index"
+                class="field-error"
+                >
+                {{ errors[fieldKey('employment', index, 'endDate')] }}
+                </p>
+              </div>
             </div>
 
             <div class="check-group">
               <input
-                :id="'working-' + index"
-                v-model="job.currentlyWorking"
                 type="checkbox"
-              >
+                v-model="job.currentlyWorking"
+                @change="
+                    job.currentlyWorking ? job.endDate = '' : null;
+                    validateField('employment', index, 'endDate')
+                "
+                />
 
               <label :for="'working-' + index">
                 I currently work here.
@@ -719,6 +946,27 @@ h3 span {
 
 .demo-button:hover {
   background: #dbe7f3;
+}
+
+.field-error {
+  color: #b42318;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  margin: 6px 0 0;
+}
+
+.form-group input[aria-invalid="true"],
+.form-group select[aria-invalid="true"] {
+  border: 2px solid #b42318;
+  background: #fff8f7;
+}
+
+.form-group input:focus-visible,
+.form-group select:focus-visible,
+button:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
 }
 
 footer {
