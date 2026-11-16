@@ -5,6 +5,38 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
+function demoAutofill() {
+  application.education.splice(
+    0,
+    application.education.length,
+    {
+      schoolName: 'Wayne State University',
+      educationLevel: "Bachelor's Degree",
+      graduationDate: '2005-05-01',
+      fieldOfStudy: 'Architecture',
+      currentlyAttending: false
+    }
+  )
+
+  application.workExperience.splice(
+    0,
+    application.workExperience.length,
+    {
+      employerName: 'Green Lantern Corps',
+      jobTitle: 'Sector 2814 Green Lantern',
+      startDate: '2010-01-15',
+      endDate: '2025-12-15',
+      currentlyWorking: true,
+      jobDuties: 'Available for emergency assignments and overnight shifts.',
+      reasonForLeaving: 'Seeking additional opportunities on Earth.'
+    }
+  )
+
+  application.noPreviousExperience = false
+  application.additionalSkills =
+    'Leadership, crisis management, military training, architecture, emergency response, teamwork, and advanced problem-solving.'
+}
+
 //add another education entry
 function addEducation() {
   application.education.push({
@@ -378,6 +410,14 @@ function nextPage() {
             Back
           </button>
 
+            <button
+            type="button"
+            class="demo-button"
+            @click="demoAutofill"
+            >
+            Demo Autofill
+            </button>
+
           <button type="submit" class="next-button">
             Next: References and Other Requirements →
           </button>
@@ -643,6 +683,21 @@ h3 span {
 
 .next-button:hover {
   background: #294f7c;
+}
+
+.demo-button {
+  padding: 11px 16px;
+  background: #eaf0f7;
+  color: #24476d;
+  border: 1px solid #cbd5e1;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.demo-button:hover {
+  background: #dbe7f3;
 }
 
 footer {

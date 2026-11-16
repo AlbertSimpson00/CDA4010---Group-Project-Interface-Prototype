@@ -4,6 +4,23 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
+function demoAutofill() {
+  Object.assign(form, {
+    position: 'Customer Service Associate',
+    desiredSalary: '30',
+    salaryPeriod: 'Hourly',
+    startDate: '2026-12-01',
+    employmentTypes: ['Full-time'],
+    workdays: [
+      'Monday', 'Tuesday', 'Wednesday',
+      'Thursday', 'Friday'
+    ],
+    weeklyHours: '40',
+    workNights: 'Yes',
+    availabilityDetails: 'Available for emergency assignments and overnight shifts.'
+  })
+}
+
 const form = reactive({
   position: '',
   desiredSalary: '',
@@ -284,6 +301,14 @@ function nextPage() {
             </button>
 
             <button
+              type="button"
+              class="demo-button"
+              @click="demoAutofill"
+            >
+              Demo Autofill
+            </button>
+
+            <button
               type="submit"
               class="next-button"
               :disabled="
@@ -306,4 +331,19 @@ function nextPage() {
 
 <style scoped>
 @import '../assets/application-form.css';
+
+.demo-button {
+  padding: 11px 16px;
+  background: #eaf0f7;
+  color: #24476d;
+  border: 1px solid #cbd5e1;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.demo-button:hover {
+  background: #dbe7f3;
+}
 </style>

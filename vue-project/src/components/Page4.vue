@@ -5,6 +5,42 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 let nextReferenceId = 1
 
+
+function demoAutofill() {
+  form.references = [
+    {
+      ...createReference(),
+      name: 'Hal Jordan',
+      title: 'Green Lantern',
+      company: 'Green Lantern Corps',
+      address: '123 Example Street, Jacksonville, FL',
+      phone: '2025551045',
+      email: 'hal.jordan@example.com'
+    },
+    {
+      ...createReference(),
+      name: 'Kilowag',
+      title: 'Green Lantern Corps Instructor',
+      company: 'Green Lantern Corps',
+      address: '456 Sample Avenue, Jacksonville, FL',
+      phone: '202-555-0188',
+      email: 'kilowag@example.com'
+    }
+  ]
+
+  form.workAuthorized = 'Yes'
+  form.over18 = 'Yes'
+
+  drivingRequired.value = true
+  form.driversLicense = 'Yes'
+  form.licenseState = 'Michigan'
+  form.licenseExpiration = '2028-06-30'
+  form.drivingDuties = 'Yes'
+
+  form.additionalInformation =
+    '	Experienced in protecting Earth and other inhabited planets from threats.'
+}
+
 function createReference() {
   return {
     id: nextReferenceId++,
@@ -432,6 +468,14 @@ function nextPage() {
             </button>
 
             <button
+            type="button"
+            class="demo-button"
+            @click="demoAutofill"
+            >
+            Demo Autofill
+            </button>
+
+            <button
               type="submit"
               class="next-button"
             >
@@ -450,4 +494,19 @@ function nextPage() {
 
 <style scoped>
 @import '../assets/application-form.css';
+
+.demo-button {
+  padding: 11px 16px;
+  background: #eaf0f7;
+  color: #24476d;
+  border: 1px solid #cbd5e1;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.demo-button:hover {
+  background: #dbe7f3;
+}
 </style>

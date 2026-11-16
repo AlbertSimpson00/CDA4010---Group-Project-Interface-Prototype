@@ -4,6 +4,20 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
+function demoAutofill() {
+  Object.assign(application.personalInfo, {
+    firstName: 'John',
+    lastName: 'Stewart',
+    streetAddress: '2814 Beware Green Lanterns Light',
+    apartment: 'Sector 2814',
+    city: 'Detroit',
+    state: 'Michigan',
+    zipCode: '48201',
+    phone: '3135550142',
+    email: 'john.stewart@example.com'
+  })
+}
+
 function nextPage() {
   router.push('/page2')
 }
@@ -73,6 +87,7 @@ function nextPage() {
               <option value="CO">Colorado</option>
               <option value="CT">Connecticut</option>
               <option value="DE">Delaware</option>
+              <option value="DC">District of Columbia</option>
               <option value="FL">Florida</option>
               <option value="GA">Georgia</option>
               <option value="HI">Hawaii</option>
@@ -135,11 +150,21 @@ function nextPage() {
 
         </div>
 
+        
         <div class="form-footer">
+          <button
+            type="button"
+            class="demo-button"
+            @click="demoAutofill"
+          >
+            Demo Autofill
+          </button>
+
           <button type="submit" class="next-button">
-              Next: Position &amp; Availability →
+            Next: Position &amp; Availability →
           </button>
         </div>
+
 
       </form>
     </main>
@@ -297,6 +322,21 @@ h2 {
 
 .next-button:hover {
   background: #294f7c;
+}
+
+.demo-button {
+  padding: 11px 16px;
+  background: #eaf0f7;
+  color: #24476d;
+  border: 1px solid #cbd5e1;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.demo-button:hover {
+  background: #dbe7f3;
 }
 
 footer {
