@@ -6,6 +6,7 @@ import Page2 from '../components/Page2.vue'
 import Page3 from '../components/Page3.vue'
 import Page4 from '../components/Page4.vue'
 import Page5 from '../components/Page5.vue'
+import Success from '../components/Success.vue'
 
 const routes = [
   { path: '/', name: 'home', component: Home },
@@ -14,6 +15,7 @@ const routes = [
   { path: '/page3', name: 'Page3', component: Page3 },
   { path: '/page4', name: 'Page4', component: Page4 },
   { path: '/page5', name: 'Page5', component: Page5 },
+  { path: '/success', name: 'Success', component: Success }
 ]
 
 const router = createRouter({

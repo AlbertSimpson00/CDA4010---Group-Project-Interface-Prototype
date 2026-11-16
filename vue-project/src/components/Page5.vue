@@ -26,7 +26,7 @@ function submitApplication() {
 
   console.log('Application submitted:', application)
 
-  alert('Application information saved! Submission is still being worked on.')
+  router.push('/success')
 }
 </script>
 
