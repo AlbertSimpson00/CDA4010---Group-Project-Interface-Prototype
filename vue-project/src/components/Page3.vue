@@ -37,6 +37,19 @@ function demoAutofill() {
     'Leadership, crisis management, military training, architecture, emergency response, teamwork, and advanced problem-solving.'
 }
 
+function clearForm() {
+  application.education.splice(0)
+  application.workExperience.splice(0)
+
+  application.noPreviousExperience = false
+  application.additionalSkills = ''
+
+  // Reset any additional Page 3 fields here.
+
+  Object.keys(errors).forEach(key => delete errors[key])
+  Object.keys(touched).forEach(key => delete touched[key])
+}
+
 //add another education entry
 function addEducation() {
   application.education.push({
@@ -415,7 +428,15 @@ function nextPage() {
             class="demo-button"
             @click="demoAutofill"
             >
-            Demo Autofill
+            Autofill
+            </button>
+
+            <button
+                type="button"
+                class="clear-button"
+                @click="clearForm"
+                >
+                Clear Form
             </button>
 
           <button type="submit" class="next-button">

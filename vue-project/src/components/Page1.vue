@@ -42,6 +42,15 @@ function getError(name) {
   return ''
 }
 
+function clearForm() {
+  Object.keys(application.personalInfo).forEach(key => {
+    application.personalInfo[key] = ''
+  })
+
+  Object.keys(errors).forEach(key => delete errors[key])
+  Object.keys(touched).forEach(key => delete touched[key])
+}
+
 function validateField(name) {
   touched[name] = true
   errors[name] = getError(name)
@@ -378,6 +387,14 @@ async function nextPage() {
             @click="demoAutofill"
           >
             Autofill
+          </button>
+
+          <button
+            type="button"
+            class="clear-button"
+            @click="clearForm"
+          >
+            Clear Form
           </button>
 
           <button type="submit" class="next-button">

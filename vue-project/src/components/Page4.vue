@@ -41,6 +41,25 @@ function demoAutofill() {
     '	Experienced in protecting Earth and other inhabited planets from threats.'
 }
 
+function clearForm() {
+  Object.assign(form, {
+    references: [],
+    workAuthorized: '',
+    over18: '',
+    driversLicense: '',
+    licenseState: '',
+    licenseExpiration: '',
+    drivingDuties: '',
+    additionalInformation: ''
+  })
+
+  // Reset the driving-related conditional section.
+  drivingRequired.value = false
+
+  Object.keys(errors).forEach(key => delete errors[key])
+  Object.keys(touched).forEach(key => delete touched[key])
+}
+
 function createReference() {
   return {
     id: nextReferenceId++,
@@ -472,7 +491,15 @@ function nextPage() {
             class="demo-button"
             @click="demoAutofill"
             >
-            Demo Autofill
+            Autofill
+            </button>
+
+            <button
+                type="button"
+                class="clear-button"
+                @click="clearForm"
+                >
+                Clear Form
             </button>
 
             <button
