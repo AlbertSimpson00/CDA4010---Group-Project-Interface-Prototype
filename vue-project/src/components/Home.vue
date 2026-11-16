@@ -15,7 +15,7 @@ function startApplication() {
     <header class="site-header">
       <div class="header-content">
         <span class="brand">UNFinished Business</span>
-        <span class="header-title">Employment Application</span>
+        <span class="header-title">Team H Employment Application</span>
       </div>
     </header>
 
@@ -59,46 +59,103 @@ function startApplication() {
         </summary>
 
         <div class="removed-content">
-            <div class="removed-item">
-            <h3>Medical Conditions & Health Insurance</h3>
-            <p>
-                These questions raise concerns under the
-                Americans with Disabilities Act (ADA).
-                Employers are generally restricted from asking
-                disability-related questions before making
-                a conditional job offer.
+            <p class="removed-description">
+                We redesigned the original employment application
+                to remove or modify questions that could raise
+                privacy, discrimination, or job-relevance concerns.
             </p>
+
+            <div class="removed-item">
+                <h3>Medical Conditions & Health Insurance</h3>
+                <p>
+                    Removed from the pre-employment application
+                    because disability-related questions are
+                    generally restricted under the Americans
+                    with Disabilities Act (ADA) before a
+                    conditional job offer.
+                </p>
             </div>
 
             <div class="removed-item">
-            <h3>Race & Gender</h3>
-            <p>
-                Title VII of the Civil Rights Act protects
-                applicants against discrimination based on
-                race and sex. Voluntary demographic information,
-                if collected, should be kept separate from
-                hiring decisions.
-            </p>
+                <h3>Social Security Number</h3>
+                <p>
+                    Removed from the initial application to
+                    protect sensitive personal information.
+                    It should be collected securely during
+                    onboarding when necessary.
+                </p>
             </div>
 
             <div class="removed-item">
-            <h3>Marital Status</h3>
-            <p>
-                Marital status is generally unrelated to
-                an applicant's qualifications or ability
-                to perform the job. Asking about it may
-                introduce discrimination concerns.
-            </p>
+                <h3>Race & Gender</h3>
+                <p>
+                    Removed because Title VII of the Civil Rights Act protects
+                    applicants against discrimination based on
+                    race and sex. Voluntary demographic information,
+                    if collected, should be kept separate from
+                    hiring decisions.
+                </p>
             </div>
 
             <div class="removed-item">
-            <h3>Children & Child-Related Absences</h3>
-            <p>
-                Questions about having children or missing
-                work due to a child's illness are not relevant
-                to evaluating job qualifications and may
-                encourage discriminatory assumptions.
-            </p>
+                <h3>Criminal Conviction History</h3>
+                <p>
+                    Removed from the initial application.
+                    Any criminal background screening should
+                    follow applicable laws and use an
+                    appropriate screening process.
+                </p>
+            </div>
+
+            <div class="removed-item">
+                <h3>Driver's License Number</h3>
+                <p>
+                    Removed from the initial application to
+                    avoid collecting unnecessary personal
+                    information. It can be requested later
+                    if driving is an essential job duty.
+                </p>
+            </div>
+
+            <div class="removed-item">
+                <h3>Military Discharge Details</h3>
+                <p>
+                    Replaced with an opportunity to describe
+                    relevant military experience and skills.
+                    This allows applicants to highlight
+                    qualifications without disclosing
+                    unnecessary discharge details.
+                </p>
+            </div>
+
+            <div class="removed-item">
+                <h3>Marital Status</h3>
+                <p>
+                    Removed because marital status is generally unrelated to
+                    an applicant's qualifications or ability
+                    to perform the job. Asking about it may
+                    introduce discrimination concerns.
+                </p>
+            </div>
+
+            <div class="removed-item">
+                <h3>Children & Child-Related Absences</h3>
+                <p>
+                    Removed because questions about having children or missing
+                    work due to a child's illness are not relevant
+                    to evaluating job qualifications and may
+                    encourage discriminatory assumptions.
+                </p>
+            </div>
+
+            <div class="removed-item">
+                <h3>Health Insurance History</h3>
+                <p>
+                    Removed because health insurance history
+                    is not relevant to evaluating an applicant's
+                    qualifications and raises unnecessary
+                    privacy concerns.
+                </p>
             </div>
         </div>
         </details>

@@ -125,7 +125,7 @@ function nextPage() {
     <header class="site-header">
       <div class="header-content">
         <span class="brand">UNFinished Business</span>
-        <span class="header-title">Employment Application</span>
+        <span class="header-title">Team H Employment Application</span>
       </div>
     </header>
 

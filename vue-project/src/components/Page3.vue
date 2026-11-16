@@ -89,7 +89,7 @@ function nextPage() {
     <!-- Header -->
     <header class="top-header">
       <span>UNFinished Business</span>
-      <small>Employment Application</small>
+      <small>Team H Employment Application</small>
     </header>
 
     <main class="form-container">
