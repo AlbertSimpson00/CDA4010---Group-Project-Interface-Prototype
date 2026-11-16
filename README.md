@@ -48,6 +48,6 @@ The Vue front end validates the form and sends it to an Express endpoint, which 
 
 Track any changes from the approved Interface Proposal here (needed for the Development Report).
 
-| Date | Change | Reason |
-|------|--------|--------|
-| N/A  |  N/A   |  N/A   |
+| Date  |             Change           |   Reason  |
+|-------|------------------------------|-----------|
+| 11/15 |  Omitted Bootstrap from stack| Redundant |
