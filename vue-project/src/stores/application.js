@@ -77,10 +77,72 @@ export const application = reactive({
   signature: '',
   signatureDate: '',
   acknowledgment: false
+})
+
+export function resetApplication() {
+  // Page 1
+  Object.keys(application.personalInfo).forEach(key => {
+    application.personalInfo[key] = ''
+  })
+
+  // Page 2
+  Object.assign(application.employment, {
+    position: '',
+    otherPosition: '',
+    desiredSalary: '',
+    salaryPeriod: 'Hourly',
+    startDate: '',
+    employmentTypes: [],
+    workdays: [],
+    weeklyHours: '',
+    workNights: '',
+    availabilityDetails: ''
+  })
+
+  // Page 3
+  application.education.splice(0, application.education.length, {
+    schoolName: '',
+    educationLevel: '',
+    graduationDate: '',
+    fieldOfStudy: '',
+    currentlyAttending: false
+  })
+
+  application.workExperience.splice(0, application.workExperience.length, {
+    employerName: '',
+    jobTitle: '',
+    startDate: '',
+    endDate: '',
+    currentlyWorking: false,
+    jobDuties: '',
+    reasonForLeaving: ''
+  })
+
+  application.noPreviousExperience = false
+  application.additionalSkills = ''
+
+  // Page 4
+  application.references = []
+  application.workAuthorized = ''
+  application.over18 = ''
+  application.drivingRequired = false
+  application.driversLicense = ''
+  application.licenseState = ''
+  application.licenseExpiration = ''
+  application.drivingDuties = ''
+  application.additionalInformation = ''
+
+  // Page 5
+  application.criminalHistory = []
+  application.resumeFile = null
+  application.resumeFileName = ''
+  application.signature = ''
+  application.signatureDate = ''
+  application.acknowledgment = false
 
   // Remove previously saved page data
   sessionStorage.removeItem('page2')
   sessionStorage.removeItem('page4')
   sessionStorage.removeItem('page4DrivingRequired')
-})
+}
 
