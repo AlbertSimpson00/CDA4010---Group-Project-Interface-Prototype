@@ -17,17 +17,37 @@ function uploadResume(event) {
   }
 }
 
-// Submit the application (still working on this)
-function submitApplication() {
+async function submitApplication() {
   if (!application.acknowledgment) {
     alert('Please agree to the application acknowledgment first.')
     return
   }
 
-  console.log('Application submitted:', application)
+  const { resumeFile, ...payload } = application
 
-  router.push('/success')
+  const formData = new FormData()
+  formData.append('application', JSON.stringify(payload))
+  if (resumeFile) formData.append('resume', resumeFile)
+
+  try {
+    const res = await fetch('/submit', {
+      method: 'POST',
+      body: formData          // don't set Content-Type; the browser adds it
+    })
+    const data = await res.json()
+
+    if (!res.ok || !data.success) {
+      alert(data.message || 'Something went wrong. Please try again.')
+      return
+    }
+
+    router.push('/success')
+  } catch (err) {
+    console.error(err)
+    alert('Could not reach the server. Is it running?')
+  }
 }
+
 </script>
 
 <template>

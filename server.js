@@ -1,6 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const multer = require('multer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -8,12 +9,19 @@ const SUBMISSIONS_DIR = path.join(__dirname, 'submissions');
 
 fs.mkdirSync(SUBMISSIONS_DIR, { recursive: true });
 
+// Keep the uploaded file in memory so we can name it after the application ID
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'application/pdf') cb(null, true);
+        else cb(new Error('Resume must be a PDF.'));
+    }
+});
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Turns the nested form data into readable lines, e.g.
-//   personalInfo.firstName: Ana
-//   references[0].phone: 407-555-1234
 function toLines(value, prefix = '') {
     if (Array.isArray(value)) {
         if (value.length === 0) return [`${prefix}: (none)`];
@@ -27,26 +35,44 @@ function toLines(value, prefix = '') {
     return [`${prefix}: ${value === null || value === undefined ? '' : value}`];
 }
 
-// No validation for now: whatever the form sends is saved as-is.
-app.post('/submit', (req, res) => {
+app.post('/submit', upload.single('resume'), (req, res) => {
+    const id = Date.now();
     const submittedAt = new Date().toISOString();
-    const fileName = `application-${Date.now()}.txt`;
+    const textName = `application-${id}.txt`;
+    const resumeName = req.file ? `application-${id}-resume.pdf` : null;
+
+    let data = {};
+    try {
+        data = JSON.parse(req.body.application || '{}');
+    } catch {
+        return res.status(400).json({ success: false, message: 'Invalid application data.' });
+    }
 
     const text = [
         'UNFinished Business - Employment Application',
+        `Application ID: ${id}`,
         `Submitted: ${submittedAt}`,
+        `Resume file: ${resumeName || '(none)'}`,
         '',
-        ...toLines(req.body || {}),
+        ...toLines(data),
         ''
     ].join('\n');
 
     try {
-        fs.writeFileSync(path.join(SUBMISSIONS_DIR, fileName), text);
-        res.status(201).json({ success: true, message: 'Application submitted successfully!' });
+        if (req.file) {
+            fs.writeFileSync(path.join(SUBMISSIONS_DIR, resumeName), req.file.buffer);
+        }
+        fs.writeFileSync(path.join(SUBMISSIONS_DIR, textName), text);
+        res.status(201).json({ success: true, id, message: 'Application submitted successfully!' });
     } catch (err) {
         console.error('Error saving application:', err);
         res.status(500).json({ success: false, message: 'Failed to save application.' });
     }
+});
+
+// Turns upload errors (wrong type, too big) into a JSON message the frontend can show
+app.use((err, req, res, next) => {
+    res.status(400).json({ success: false, message: err.message || 'Upload failed.' });
 });
 
 app.listen(PORT, () => {
