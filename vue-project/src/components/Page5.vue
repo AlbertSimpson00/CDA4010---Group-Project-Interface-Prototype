@@ -4,6 +4,39 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
+function getToday() {
+  const date = new Date()
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
+}
+
+const today = getToday()
+
+application.signatureDate = today
+
+function display(value) {
+  if (value === null || value === undefined || value === '') {
+    return 'Not provided'
+  }
+
+  if (Array.isArray(value)) {
+    return value.length ? value.join(', ') : 'Not provided'
+  }
+
+  return String(value)
+}
+
+function yesNo(value) {
+  if (typeof value === 'boolean') {
+    return value ? 'Yes' : 'No'
+  }
+
+  return display(value)
+}
+
 function previousPage() {
   router.push('/page4')
 }
@@ -18,6 +51,11 @@ function uploadResume(event) {
 }
 
 async function submitApplication() {
+  if (application.signatureDate !== getToday()) {
+    alert('Signature date must be today.')
+    application.signatureDate = getToday()
+    return
+  }
   if (!application.acknowledgment) {
     alert('Please agree to the application acknowledgment first.')
     return
@@ -114,43 +152,226 @@ async function submitApplication() {
 
         <!-- APPLICATION REVIEW -->
         <section class="form-section">
-
           <h3>Application Information</h3>
 
           <p class="section-description">
-            Make sure your information is correct before continuing.
+            Please review your information before submitting.
           </p>
 
-          <div class="review-box">
+          <div class="application-review-scroll">
 
-            <p>
-              <strong>Name:</strong>
-              {{ application.personalInfo.firstName }}
-              {{ application.personalInfo.lastName }}
-            </p>
+            <!-- PAGE 1 -->
+            <div class="review-box">
+              <h4>Personal Information</h4>
+              <p><strong>First Name:</strong>
+              {{ display(application.personalInfo.firstName) }}</p>
 
-            <p>
-              <strong>Email:</strong>
-              {{ application.personalInfo.email }}
-            </p>
+              <p><strong>Last Name:</strong>
+                {{ display(application.personalInfo.lastName) }}</p>
 
-            <p>
-              <strong>Phone:</strong>
-              {{ application.personalInfo.phone }}
-            </p>
+              <p><strong>Street Address:</strong>
+                {{ display(application.personalInfo.streetAddress) }}</p>
 
-            <p>
-              <strong>Position:</strong>
-              {{ application.employment.position || 'Not entered yet' }}
-            </p>
+              <p><strong>Apartment / Unit:</strong>
+                {{ display(application.personalInfo.apartment) }}</p>
 
+              <p><strong>City:</strong>
+                {{ display(application.personalInfo.city) }}</p>
+
+              <p><strong>State:</strong>
+                {{ display(application.personalInfo.state) }}</p>
+
+              <p><strong>ZIP Code:</strong>
+                {{ display(application.personalInfo.zipCode) }}</p>
+
+              <p><strong>Email:</strong>
+                {{ display(application.personalInfo.email) }}</p>
+
+              <p><strong>Phone:</strong>
+                {{ display(application.personalInfo.phone) }}</p>
+            </div>
+
+            <!-- PAGE 2 -->
+            <div class="review-box">
+              <h4>Position & Availability</h4>
+              <p><strong>Position Applied For:</strong>
+                {{ display(application.employment.position) }}</p>
+
+              <p v-if="application.employment.position === 'Other'">
+                <strong>Other Position:</strong>
+                {{ display(application.employment.otherPosition) }}
+              </p>
+
+              <p><strong>Desired Salary:</strong>
+                {{ display(application.employment.desiredSalary) }}</p>
+
+              <p><strong>Salary Period:</strong>
+                {{ display(application.employment.salaryPeriod) }}</p>
+
+              <p><strong>Available Start Date:</strong>
+                {{ display(application.employment.startDate) }}</p>
+
+              <p><strong>Employment Desired:</strong>
+                {{ display(application.employment.employmentTypes) }}</p>
+
+              <p><strong>Days Available:</strong>
+                {{ display(application.employment.workdays) }}</p>
+
+              <p><strong>Hours Per Week:</strong>
+                {{ display(application.employment.weeklyHours) }}</p>
+
+              <p><strong>Can Work Nights:</strong>
+                {{ display(application.employment.workNights) }}</p>
+
+              <p><strong>Additional Availability Details:</strong>
+                {{ display(application.employment.availabilityDetails) }}</p>
+            </div>
+
+            <!-- PAGE 3 -->
+            <div class="review-box">
+              <h4>Education</h4>
+              <div
+                v-for="(school, index) in application.education"
+                :key="index"
+                class="review-entry"
+              >
+                <h5>Education {{ index + 1 }}</h5>
+
+                <p><strong>School Name:</strong>
+                  {{ display(school.schoolName) }}</p>
+
+                <p><strong>Education Level:</strong>
+                  {{ display(school.educationLevel) }}</p>
+
+                <p><strong>Graduation Date:</strong>
+                  {{ display(school.graduationDate) }}</p>
+
+                <p><strong>Field of Study:</strong>
+                  {{ display(school.fieldOfStudy) }}</p>
+
+                <p><strong>Currently Attending:</strong>
+                  {{ yesNo(school.currentlyAttending) }}</p>
+              </div>
+
+              <p v-if="!application.education.length">
+                No education information entered.
+              </p>
+            </div>
+
+            <div class="review-box">
+              <h4>Work Experience</h4>
+                
+              <p><strong>No Previous Work Experience:</strong>
+                {{ yesNo(application.noPreviousExperience) }}</p>
+
+              <template v-if="!application.noPreviousExperience">
+                <div
+                  v-for="(job, index) in application.workExperience"
+                  :key="index"
+                  class="review-entry"
+                >
+                  <h5>Employer {{ index + 1 }}</h5>
+
+                  <p><strong>Employer Name:</strong>
+                    {{ display(job.employerName) }}</p>
+
+                  <p><strong>Job Title:</strong>
+                    {{ display(job.jobTitle) }}</p>
+
+                  <p><strong>Start Date:</strong>
+                    {{ display(job.startDate) }}</p>
+
+                  <p><strong>End Date:</strong>
+                    {{ job.currentlyWorking
+                      ? 'Present'
+                      : display(job.endDate) }}</p>
+
+                  <p><strong>Currently Working:</strong>
+                    {{ yesNo(job.currentlyWorking) }}</p>
+
+                  <p><strong>Job Duties:</strong>
+                    {{ display(job.jobDuties) }}</p>
+
+                  <p><strong>Reason for Leaving:</strong>
+                    {{ display(job.reasonForLeaving) }}</p>
+                </div>
+
+                <p v-if="!application.workExperience.length">
+                  No employment history entered.
+                </p>
+              </template>
+
+              <p><strong>Additional Skills:</strong>
+                {{ display(application.additionalSkills) }}</p>
+            </div>
+
+            <!-- PAGE 4 -->
+            <div class="review-box">
+              <h4>References</h4>
+
+              <div
+                v-for="(reference, index) in application.references"
+                :key="reference.id ?? index"
+                class="review-entry"
+              >
+                <h5>Reference {{ index + 1 }}</h5>
+
+                <p><strong>Full Name:</strong>
+                  {{ display(reference.name) }}</p>
+
+                <p><strong>Job Title:</strong>
+                  {{ display(reference.title) }}</p>
+
+                <p><strong>Company:</strong>
+                  {{ display(reference.company) }}</p>
+
+                <p><strong>Address:</strong>
+                  {{ display(reference.address) }}</p>
+
+                <p><strong>Phone:</strong>
+                  {{ display(reference.phone) }}</p>
+
+                <p><strong>Email:</strong>
+                  {{ display(reference.email) }}</p>
+              </div>
+
+              <p v-if="!application.references.length">
+                No references entered.
+              </p>
+            </div>
+
+            <div class="review-box">
+              <h4>Other Requirements</h4>
+
+              <p><strong>Authorized to Work in the U.S.:</strong>
+                {{ display(application.workAuthorized) }}</p>
+
+              <p><strong>At Least 18 Years Old:</strong>
+                {{ display(application.over18) }}</p>
+
+              <p><strong>Position Requires Driving:</strong>
+                {{ yesNo(application.drivingRequired) }}</p>
+
+              <template v-if="application.drivingRequired">
+                <p><strong>Valid Driver's License:</strong>
+                  {{ display(application.driversLicense) }}</p>
+
+                <p><strong>License State:</strong>
+                  {{ display(application.licenseState) }}</p>
+
+                <p><strong>License Expiration:</strong>
+                  {{ display(application.licenseExpiration) }}</p>
+
+                <p><strong>Driving Duties:</strong>
+                  {{ display(application.drivingDuties) }}</p>
+              </template>
+
+              <p><strong>Additional Information:</strong>
+                {{ display(application.additionalInformation) }}</p>
+            </div>
           </div>
-
-          <small class="help-text">
-            This is just a quick review of some of your information.
-          </small>
-
         </section>
+
 
         <!-- ACKNOWLEDGMENT -->
         <section class="form-section">
@@ -247,6 +468,8 @@ async function submitApplication() {
                 id="signatureDate"
                 type="date"
                 v-model="application.signatureDate"
+                :min="today"
+                :max="today"
                 required
               >
             </div>
@@ -436,6 +659,74 @@ h3 {
 
 .review-box p {
   margin: 5px 0 10px;
+}
+
+.review-box {
+  margin-bottom: 16px;
+  overflow-wrap: anywhere;
+}
+
+.review-box h4 {
+  color: #1c3b63;
+  font-size: 14px;
+  margin: 0 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #dfe3e8;
+}
+
+.review-box h5 {
+  color: #344054;
+  font-size: 12px;
+  margin: 12px 0 10px;
+}
+
+.review-box p {
+  font-size: 11px;
+  line-height: 1.6;
+  margin: 7px 0;
+  white-space: pre-wrap;
+}
+
+.review-entry {
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+
+.review-entry:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.application-review-scroll {
+  height: 350px;
+  max-height: 45vh;
+  min-height: 200px;
+  width: 100%;
+  box-sizing: border-box;
+
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #f9fafb;
+
+  scrollbar-width: thin;
+  scrollbar-color: #9ca3af #f3f4f6;
+}
+
+.application-review-scroll .review-box {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+}
+
+.application-review-scroll .review-box:last-child {
+  margin-bottom: 0;
 }
 
 .help-text {
