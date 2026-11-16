@@ -189,6 +189,7 @@ onMounted(() => {
 })
 
 function saveForm() {
+  Object.assign(application.employment, form)
   sessionStorage.setItem('page2', JSON.stringify(form))
 }
 

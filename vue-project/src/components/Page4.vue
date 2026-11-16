@@ -272,6 +272,15 @@ function removeReference(index) {
 }
 
 function saveForm() {
+    application.references = form.references.map(ref => ({ ...ref }))
+    application.workAuthorized = form.workAuthorized
+    application.over18 = form.over18
+    application.drivingRequired = drivingRequired.value
+    application.driversLicense = form.driversLicense
+    application.licenseState = form.licenseState
+    application.licenseExpiration = form.licenseExpiration
+    application.drivingDuties = form.drivingDuties
+    application.additionalInformation = form.additionalInformation  
   sessionStorage.setItem('page4', JSON.stringify(form))
   sessionStorage.setItem(
     'page4DrivingRequired',

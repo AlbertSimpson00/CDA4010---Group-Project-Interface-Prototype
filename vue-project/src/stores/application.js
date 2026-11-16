@@ -1,8 +1,8 @@
-
 import { reactive } from 'vue'
 
 export const application = reactive({
 
+  // PAGE 1: Personal Information
   personalInfo: {
     firstName: '',
     lastName: '',
@@ -15,17 +15,21 @@ export const application = reactive({
     phone: ''
   },
 
+  // PAGE 2: Position & Availability
   employment: {
     position: '',
     otherPosition: '',
-    employmentType: '',
-    availableStartDate: '',
-    availableDays: [],
-    preferredShifts: [],
-    additionalNotes: '',
-    fullTime: false
+    desiredSalary: '',
+    salaryPeriod: 'Hourly',
+    startDate: '',
+    employmentTypes: [],
+    workdays: [],
+    weeklyHours: '',
+    workNights: '',
+    availabilityDetails: ''
   },
 
+  // PAGE 3: Education
   education: [
     {
       schoolName: '',
@@ -36,6 +40,7 @@ export const application = reactive({
     }
   ],
 
+  // PAGE 3: Work Experience
   workExperience: [
     {
       employerName: '',
@@ -47,14 +52,35 @@ export const application = reactive({
       reasonForLeaving: ''
     }
   ],
+
   noPreviousExperience: false,
   additionalSkills: '',
+
+  // PAGE 4: References
   references: [],
-  criminalHistory: [],
+
+  // PAGE 4: Other Requirements
+  workAuthorized: '',
+  over18: '',
+
+  // PAGE 4: Driving Information
+  drivingRequired: false,
+  driversLicense: '',
+  licenseState: '',
+  licenseExpiration: '',
+  drivingDuties: '',
+  additionalInformation: '',
+
+  // PAGE 5: Review & Submit
   resumeFile: null,
   resumeFileName: '',
   signature: '',
   signatureDate: '',
   acknowledgment: false
 
+  // Remove previously saved page data
+  sessionStorage.removeItem('page2')
+  sessionStorage.removeItem('page4')
+  sessionStorage.removeItem('page4DrivingRequired')
 })
+
