@@ -1,8 +1,82 @@
 <script setup>
 import { application } from '../stores/application.js'
 import { useRouter } from 'vue-router'
+import { reactive, nextTick } from 'vue'
 
 const router = useRouter()
+
+const errors = reactive({})
+const touched = reactive({})
+const fieldRefs = {}
+
+function setFieldRef(name, element) {
+  if (element) fieldRefs[name] = element
+}
+
+function getError(name) {
+  const value = String(
+    application.personalInfo[name] ?? ''
+  ).trim()
+
+  if (!value) {
+    return `${name
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, char => char.toUpperCase())} is required.`
+  }
+
+  if (name === 'email' &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+    return 'Enter a valid email address.'
+  }
+
+  if (name === 'phone' &&
+      value.replace(/\D/g, '').length !== 10) {
+    return 'Enter a 10-digit phone number.'
+  }
+
+  if (name === 'zipCode' &&
+      !/^\d{5}(-\d{4})?$/.test(value)) {
+    return 'Enter a valid ZIP code, such as 32202.'
+  }
+
+  return ''
+}
+
+function validateField(name) {
+  touched[name] = true
+  errors[name] = getError(name)
+}
+
+function updateField(name) {
+  if (touched[name]) {
+    errors[name] = getError(name)
+  }
+}
+
+async function validatePage() {
+  const fields = [
+    'firstName',
+    'lastName',
+    'streetAddress',
+    'city',
+    'state',
+    'zipCode',
+    'phone',
+    'email'
+  ]
+
+  fields.forEach(validateField)
+
+  const firstInvalid = fields.find(name => errors[name])
+
+  if (firstInvalid) {
+    await nextTick()
+    fieldRefs[firstInvalid]?.focus()
+    return false
+  }
+
+  return true
+}
 
 function demoAutofill() {
   Object.assign(application.personalInfo, {
@@ -11,14 +85,21 @@ function demoAutofill() {
     streetAddress: '2814 Beware Green Lanterns Light',
     apartment: 'Sector 2814',
     city: 'Detroit',
-    state: 'Michigan',
+    state: 'MI',
     zipCode: '48201',
     phone: '3135550142',
     email: 'john.stewart@example.com'
   })
+  Object.keys(touched).forEach(name => {
+    if (touched[name]) {
+      errors[name] = getError(name)
+    }
+  })
 }
 
-function nextPage() {
+async function nextPage() {
+  if (!(await validatePage())) return
+
   router.push('/page2')
 }
 </script>
@@ -46,39 +127,125 @@ function nextPage() {
       <p class="subtitle">Tell us how we can contact you.</p>
       <p class="required-text">* Required fields</p>
 
-      <form @submit.prevent="nextPage">
+      <form @submit.prevent="nextPage" novalidate>
 
         <div class="form-grid">
 
+        <div class="form-group">
+          <label for="firstName">First Name *</label>
+
+          <input
+            id="firstName"
+            :ref="el => setFieldRef('firstName', el)"
+            v-model="application.personalInfo.firstName"
+            type="text"
+            autocomplete="given-name"
+            :aria-invalid="!!errors.firstName"
+            :aria-describedby="
+              errors.firstName ? 'firstName-error' : undefined
+            "
+            @blur="validateField('firstName')"
+            @input="clearError('firstName')"
+          />
+          <p
+            v-if="errors.firstName"
+            id="firstName-error"
+            class="field-error"
+          >
+            {{ errors.firstName }}
+          </p>
+        </div>
+          
+        <div class="form-group">
+          <label for="lastName">Last Name *</label>
+
+          <input
+            id="lastName"
+            :ref="el => setFieldRef('lastName', el)"
+            v-model="application.personalInfo.lastName"
+            type="text"
+            autocomplete="given-name"
+            :aria-invalid="!!errors.lastName"
+            :aria-describedby="
+              errors.lastName ? 'lastName-error' : undefined
+            "
+            @blur="validateField('lastName')"
+            @input="clearError('lastName')"
+          />
+
+          <p
+            v-if="errors.lastName"
+            id="lastName-error"
+            class="field-error"
+          >
+            {{ errors.lastName }}
+          </p>
+        </div>
+
+         <div class="form-group full-width">
+          <label for="streetAddress">Street Address *</label>
+          <input
+            id="streetAddress"
+            :ref="el => setFieldRef('streetAddress', el)"
+            v-model="application.personalInfo.streetAddress"
+            type="text"
+            autocomplete="address-line1"
+            required
+            :aria-invalid="!!errors.streetAddress"
+            :aria-describedby="errors.streetAddress ? 'streetAddress-error' : undefined"
+            @blur="validateField('streetAddress')"
+            @input="updateField('streetAddress')"
+          />
+          <p v-if="errors.streetAddress" id="streetAddress-error" class="field-error">
+            {{ errors.streetAddress }}
+          </p>
+        </div>
+
           <div class="form-group">
-            <label>First Name *</label>
-            <input v-model="application.personalInfo.firstName" type="text" required>
+            <label for="apartment">
+              Apartment/Unit <span>(optional)</span>
+            </label>
+            <input
+              id="apartment"
+              v-model="application.personalInfo.apartment"
+              type="text"
+              autocomplete="address-line2"
+            />
           </div>
 
           <div class="form-group">
-            <label>Last Name *</label>
-            <input v-model="application.personalInfo.lastName" type="text" required>
-          </div>
-
-          <div class="form-group full-width">
-            <label>Street Address *</label>
-            <input v-model="application.personalInfo.streetAddress" type="text" required>
-          </div>
-
-          <div class="form-group">
-            <label>Apartment/Unit <span>(optional)</span></label>
-            <input v-model="application.personalInfo.apartment" type="text">
-          </div>
-
-          <div class="form-group">
-            <label>City *</label>
-            <input v-model="application.personalInfo.city" type="text" required>
+            <label for="city">City *</label>
+            <input
+              id="city"
+              :ref="el => setFieldRef('city', el)"
+              v-model="application.personalInfo.city"
+              type="text"
+              autocomplete="address-level2"
+              required
+              :aria-invalid="!!errors.city"
+              :aria-describedby="errors.city ? 'city-error' : undefined"
+              @blur="validateField('city')"
+              @input="updateField('city')"
+            />
+            <p v-if="errors.city" id="city-error" class="field-error">
+              {{ errors.city }}
+            </p>
           </div>
    
           <div class="form-group">
             <label for="state">State *</label>
 
-            <select id="state" v-model="application.personalInfo.state" required>
+            <select
+              id="state"
+              :ref="el => setFieldRef('state', el)"
+              v-model="application.personalInfo.state"
+              autocomplete="address-level1"
+              required
+              :aria-invalid="!!errors.state"
+              :aria-describedby="errors.state ? 'state-error' : undefined"
+              @blur="validateField('state')"
+              @change="updateField('state')"
+            >
               <option value="" disabled>Select State</option>
               <option value="AL">Alabama</option>
               <option value="AK">Alaska</option>
@@ -132,21 +299,73 @@ function nextPage() {
               <option value="WI">Wisconsin</option>
               <option value="WY">Wyoming</option>
             </select>
+
+            <p
+              v-if="errors.state"
+              id="state-error"
+              class="field-error"
+            >
+              {{ errors.state }}
+            </p>
           </div>
 
           <div class="form-group">
-            <label>ZIP Code *</label>
-            <input v-model="application.personalInfo.zipCode" type="text" required>
+            <label for="zipCode">ZIP Code *</label>
+            <input
+              id="zipCode"
+              :ref="el => setFieldRef('zipCode', el)"
+              v-model="application.personalInfo.zipCode"
+              type="text"
+              inputmode="numeric"
+              autocomplete="postal-code"
+              maxlength="10"
+              required
+              :aria-invalid="!!errors.zipCode"
+              :aria-describedby="errors.zipCode ? 'zipCode-error' : undefined"
+              @blur="validateField('zipCode')"
+              @input="updateField('zipCode')"
+            />
+            <p v-if="errors.zipCode" id="zipCode-error" class="field-error">
+              {{ errors.zipCode }}
+            </p>
           </div>
 
           <div class="form-group">
-            <label>Phone Number *</label>
-            <input v-model="application.personalInfo.phone" type="tel" required>
+            <label for="phone">Phone Number *</label>
+            <input
+              id="phone"
+              :ref="el => setFieldRef('phone', el)"
+              v-model="application.personalInfo.phone"
+              type="tel"
+              autocomplete="tel"
+              required
+              :aria-invalid="!!errors.phone"
+              :aria-describedby="errors.phone ? 'phone-error' : undefined"
+              @blur="validateField('phone')"
+              @input="updateField('phone')"
+            />
+            <p v-if="errors.phone" id="phone-error" class="field-error">
+              {{ errors.phone }}
+            </p>
           </div>
 
           <div class="form-group">
-            <label>Email Address *</label>
-            <input v-model="application.personalInfo.email" type="email" required>
+            <label for="email">Email Address *</label>
+            <input
+              id="email"
+              :ref="el => setFieldRef('email', el)"
+              v-model="application.personalInfo.email"
+              type="email"
+              autocomplete="email"
+              required
+              :aria-invalid="!!errors.email"
+              :aria-describedby="errors.email ? 'email-error' : undefined"
+              @blur="validateField('email')"
+              @input="updateField('email')"
+            />
+            <p v-if="errors.email" id="email-error" class="field-error">
+              {{ errors.email }}
+            </p>
           </div>
 
         </div>
@@ -158,7 +377,7 @@ function nextPage() {
             class="demo-button"
             @click="demoAutofill"
           >
-            Demo Autofill
+            Autofill
           </button>
 
           <button type="submit" class="next-button">
@@ -381,4 +600,47 @@ footer {
     grid-column: span 1;
   }
 }
+
+
+/* Accessible error messages */
+.field-error {
+  color: #b42318;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  margin: 5px 0 0;
+}
+
+/* Invalid fields */
+.form-group input[aria-invalid="true"],
+.form-group select[aria-invalid="true"] {
+  border: 2px solid #b42318;
+  background: #fff8f7;
+}
+
+/* Keyboard focus */
+.form-group input:focus-visible,
+.form-group select:focus-visible,
+button:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* Improve field readability */
+.form-group label {
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+  min-height: 40px;
+  font-size: 14px;
+}
+
+.next-button {
+  min-height: 44px;
+  font-size: 13px;
+}
+
 </style>

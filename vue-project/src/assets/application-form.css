@@ -420,3 +420,25 @@ button {
     transition-duration: 0.01ms !important;
   }
 }
+
+.field-error {
+  color: #b42318;
+  font-size: 13px;
+  font-weight: 500;
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+input[aria-invalid="true"],
+select[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+  border: 2px solid #b42318;
+  background: #fff8f7;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}
