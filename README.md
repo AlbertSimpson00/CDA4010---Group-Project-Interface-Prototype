@@ -14,7 +14,7 @@ A web-based, accessible version of UNFinished Business's paper employment applic
 
 ## Tech Stack
 
-Node.js · Express · Vue.js · Bootstrap
+Node.js · Express · Vue.js
 
 ## Getting Started
 
